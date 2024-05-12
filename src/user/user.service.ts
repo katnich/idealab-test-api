@@ -1,16 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { CreateKolDto } from './dto/create-kol.dto';
-import { UpdateKolDto } from './dto/update-kol.dto';
-import { Kol, KolDocument } from './schemas/kol.schema';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { promises } from 'fs';
-import { NotFoundException } from '@nestjs/common';
-import { InternalServerErrorException } from '@nestjs/common';
+import { User, UserDocument } from './schemas/user.schema'; // Import UserDocument
+
+import { RegisterUserDTO } from './dto/register-user.dto';
+import { UpdateKolDto } from './dto/update-kol.dto';
+import { CreateKolDto } from './dto/create-kol.dto';
+import { Kol, KolDocument } from './schemas/kol.schema';
 
 @Injectable()
-export class KolService {
-  constructor(@InjectModel(Kol.name) private kolModel: Model<KolDocument>) {}
+export class UserService {
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Kol.name) private readonly kolModel: Model<KolDocument>,
+  ) {} // Use UserDocument type
+
+  async register(registerDTO: RegisterUserDTO): Promise<User> {
+    const newUser = new this.userModel(registerDTO);
+    return await newUser.save();
+  }
+
+  // หา user
+  async findByEmail(email: string): Promise<UserDocument> {
+    return await this.userModel.findOne({ email }).exec();
+  }
 
   async create(createKolDto: CreateKolDto): Promise<Kol> {
     const result = new this.kolModel(createKolDto);

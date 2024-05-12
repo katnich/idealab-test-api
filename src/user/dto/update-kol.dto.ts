@@ -6,7 +6,7 @@ export class UpdateKolDto extends PartialType(CreateKolDto) {
   @IsString()
   @IsOptional()
   readonly name?: string;
-  
+
   @IsString()
   @IsOptional()
   readonly platform?: string;
