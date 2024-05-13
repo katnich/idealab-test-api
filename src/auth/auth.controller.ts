@@ -4,6 +4,8 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { IResponse } from 'src/common/interfaces/response.interface';
 import { ResponseError, ResponseSuccess } from 'src/common/dto/response.dto';
+import { GoogleAuthGuard } from './google-auth.guard';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +20,30 @@ export class AuthController {
     } catch (error) {
       return new ResponseError('login.error', error);
     }
+  }
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth(@Request() req) {
+    // Initiates the Google OAuth process
+  }
+
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuthRedirect(@Request() req, @Res({ passthrough: true }) res: Response) {
+    const { accessToken } = await this.authService.googleLogin(req);
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+    });
+  }
+
+  // เพิ่ม logout
+  @Get('logout')
+  async logout(@Request() req, @Res({ passthrough: true }) res: Response) {
+    res.clearCookie('jwt token', {
+      httpOnly: true,
+    });
+    return { message: 'Successfully logged out' };
   }
 
 }

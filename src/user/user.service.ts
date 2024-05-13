@@ -35,7 +35,11 @@ export class UserService {
   }
 
   async findOne(id: string): Promise<Kol> {
-    return this.kolModel.findById(id).exec();
+    let data = this.kolModel.findById(id).exec();
+    if(!data){
+      throw new NotFoundException();
+    }
+    return data;
   }
 
   async update(

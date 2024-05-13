@@ -10,6 +10,6 @@ import { Kol, KolSchema } from './schemas/kol.schema';
   imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema },{ name: Kol.name, schema: KolSchema }])],
   controllers: [UserController],
   providers: [UserService, JwtStrategy],
-  exports:[UserService]
+  exports:[UserService, MongooseModule]
 })
 export class UserModule {}
